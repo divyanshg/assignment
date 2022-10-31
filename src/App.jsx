@@ -1,24 +1,31 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Alphabet from "./components/Alphabet";
 import Operator from "./components/Operator";
 import Comparator from "./components/Comparator";
 import BaseButton from "./components/BaseButton";
 
 function App() {
-  const [alphabets, setAlphabets] = useState([
-    { id: 1, value: "A", numericalValue: 10 },
-    { id: 2, value: "B", numericalValue: 42 },
-    { id: 3, value: "C", numericalValue: 33 },
-    { id: 4, value: "D", numericalValue: 14 },
-    { id: 5, value: "E", numericalValue: 57 },
-    { id: 6, value: "F", numericalValue: 46 },
-    { id: 7, value: "G", numericalValue: 71 },
-  ]);
-
-  const [operators, setOperators] = useState(["+", "-", "*", "/"]);
+  const [alphabets, setAlphabets] = useState([]);
+  const [operators, setOperators] = useState([]);
   const [comparators, setComparators] = useState(["<", ">"]);
   const [dragData, setDragData] = useState({});
   const [itemsInDropZone, setItemsInDropZone] = useState([]);
+
+  useEffect(() => {
+    (async () => {
+      const response = await fetch(
+        "https://div-assignment.herokuapp.com/content"
+      );
+      const data = await response.json();
+      setAlphabets(data.alphabets);
+
+      let _operators = [];
+      data.operators.forEach((operator) => {
+        _operators.push(operator.value);
+      });
+      setOperators(_operators);
+    })();
+  }, []);
 
   const handleDragStart = (e, value, type, numericalValue) => {
     setDragData({ value, type, numericalValue });
